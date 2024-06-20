@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useState ,useEffect , useRef} from 'react'
 
 import './App.css'
 
@@ -8,21 +8,51 @@ function App() {
   const [charAllowed , setCharAllowed]  = useState(false);
   const [password , setPassword]  = useState();
 
+
+  // --------- useCallback-------- //
+  // useCallback (memoize) karne ke liye responsible he, optimize karta he ,caache me rakta he.
+  // method ko optimize karta he(method dubar run ho to)
   const passwordGenerator = useCallback(()=> {
     let pass = ''
     let str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     if(numberAllowed) str += "0123456789";
     if(charAllowed) str += "@!#$%^&*_+=?><|{}[]/";
-    for (let i = 0; i <= length; i++) {
+    for (let i = 1; i <= length; i++) {
         const char = Math.floor(Math.random() * str.length + 1)
-        pass = str.charAt(char);
+        pass = pass + str.charAt(char);
         // console.log(pass);
-      
-    }
+      }
   
     setPassword(pass);
   },[length , numberAllowed ,charAllowed , setPassword])
  
+  
+
+  //----------- useEffect ------- //
+  // passwordGenerator ko call karne ke liye (useEffect) hooks ka used karunga
+  // useEffect(()=>{} , [dependancy]) // syntax he hooks.
+ // eski dependency me kuch bhi change ho to dubara se run kardo.,
+
+  useEffect(()=>{
+    passwordGenerator(); 
+    // (passwordGenerator ko call karenge bina (useEffect) ke to error aayga .)
+  } , [length,numberAllowed , charAllowed , passwordGenerator])
+
+  //  all hooks me (dependency) me changes hoga to (hooks) re run honge ..
+
+
+   // useRef//
+    // useRef hooks (reference pass karna ho tab)
+    const passwordRef = useRef(null);
+
+   const copyPasswordClipBoard = useCallback(()=>{
+    passwordRef.current?.select()
+    // passwordRef.current?.setSelectionRange(0,8) // kuch range me hi select karna ho tab
+    // copy text  effect//
+    window.navigator.clipboard.writeText(password);
+  } , [password])
+
+  
   return (
     <>
     <div className="w-full max-w-2xl mx-auto shadow-md rounded-lg px-4 py-3 my-8 bg-gray-800 text-orange-600">
@@ -34,8 +64,11 @@ function App() {
           className='  overflow-hidden  w-full py-2 px-3 text-3xl'
           value={password}
           readOnly
+          ref={passwordRef}
            />
+
            <button 
+           onClick={copyPasswordClipBoard}
            className='bg-blue-700 px-3 py-0.5 text-white shrink-0'>copy</button>
         </div>
 
@@ -44,7 +77,7 @@ function App() {
             <input
              type="range" 
              min={8}
-             max={100}
+             max={30}
              value={length}
              className="cursor-pointer"
              onChange={(e)=>{setLength(e.target.value)}}
