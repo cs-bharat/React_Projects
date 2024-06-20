@@ -1,5 +1,4 @@
 import { useCallback, useState ,useEffect , useRef} from 'react'
-
 import './App.css'
 
 function App() {
@@ -9,8 +8,8 @@ function App() {
   const [password , setPassword]  = useState();
 
 
-  // --------- useCallback-------- //
-  // useCallback (memoize) karne ke liye responsible he, optimize karta he ,caache me rakta he.
+  // --------- useCallback--------
+  // useCallback (memoize) karne ke liye responsible he, optimize karta he ,cache me rakta he.
   // method ko optimize karta he(method dubar run ho to)
   const passwordGenerator = useCallback(()=> {
     let pass = ''
@@ -42,10 +41,12 @@ function App() {
 
 
    // useRef//
-    // useRef hooks (reference pass karna ho tab)
+    // useRef hooks (reference pass karna ho tab)//
+
+
     const passwordRef = useRef(null);
 
-   const copyPasswordClipBoard = useCallback(()=>{
+    const copyPasswordClipBoard = useCallback(()=>{
     passwordRef.current?.select()
     // passwordRef.current?.setSelectionRange(0,8) // kuch range me hi select karna ho tab
     // copy text  effect//
